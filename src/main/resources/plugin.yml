@@ -1,0 +1,14 @@
+name: NPI
+version: ${version}
+main: com.drovyng.npi.NPI
+api-version: ${apiVersion}
+prefix: NexusPoinsIdeas
+authors: [ Drovyng ]
+description: ${desc}
+website: https://vk.com/nexuspoins
+depend: [ CoreProtect ]
+commands:
+  npi:
+    description: NexusPoins Ideas!
+    usage: /npi [page]
+    aliases: [ nexuspoinsideas ]
