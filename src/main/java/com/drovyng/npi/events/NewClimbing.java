@@ -1,13 +1,11 @@
 package com.drovyng.npi.events;
 
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.util.Vector;
 
 public class NewClimbing implements Listener {
 
@@ -15,8 +13,6 @@ public class NewClimbing implements Listener {
     public void onPlayerClimb(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         if (player.getGameMode() == GameMode.SPECTATOR) return;
-
-        var blockType = player.getLocation().getBlock().getType();
 
         if (player.isClimbing() && player.getPitch() <= -85f && event.getFrom().getY() < event.getTo().getY()) {
             var velocity = player.getVelocity();

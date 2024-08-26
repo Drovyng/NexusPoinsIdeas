@@ -23,33 +23,12 @@ public final class CustomItems {
         Recipe_InspectBrush();
 
         for (var mat : Material.values()) {
-            if (mat.name().toLowerCase().contains("template")){
+            if (mat.toString().toLowerCase().contains("template")){
                 Recipe_TemplateLaminate(mat);
             }
-        }
-        {
-            Recipe_WoodAxe(Material.OAK_LOG, Material.STRIPPED_OAK_LOG);
-            Recipe_WoodAxe(Material.SPRUCE_LOG, Material.STRIPPED_SPRUCE_LOG);
-            Recipe_WoodAxe(Material.BIRCH_LOG, Material.STRIPPED_BIRCH_LOG);
-            Recipe_WoodAxe(Material.DARK_OAK_LOG, Material.STRIPPED_DARK_OAK_LOG);
-            Recipe_WoodAxe(Material.ACACIA_LOG, Material.STRIPPED_ACACIA_LOG);
-            Recipe_WoodAxe(Material.JUNGLE_LOG, Material.STRIPPED_JUNGLE_LOG);
-            Recipe_WoodAxe(Material.MANGROVE_LOG, Material.STRIPPED_MANGROVE_LOG);
-            Recipe_WoodAxe(Material.CHERRY_LOG, Material.STRIPPED_CHERRY_LOG);
-            Recipe_WoodAxe(Material.BAMBOO_BLOCK, Material.STRIPPED_BAMBOO_BLOCK);
-            Recipe_WoodAxe(Material.CRIMSON_STEM, Material.STRIPPED_CRIMSON_STEM);
-            Recipe_WoodAxe(Material.WARPED_STEM, Material.STRIPPED_WARPED_STEM);
-
-            Recipe_WoodAxe(Material.OAK_WOOD, Material.STRIPPED_OAK_WOOD);
-            Recipe_WoodAxe(Material.SPRUCE_WOOD, Material.STRIPPED_SPRUCE_WOOD);
-            Recipe_WoodAxe(Material.BIRCH_WOOD, Material.STRIPPED_BIRCH_WOOD);
-            Recipe_WoodAxe(Material.DARK_OAK_WOOD, Material.STRIPPED_DARK_OAK_WOOD);
-            Recipe_WoodAxe(Material.ACACIA_WOOD, Material.STRIPPED_ACACIA_WOOD);
-            Recipe_WoodAxe(Material.JUNGLE_WOOD, Material.STRIPPED_JUNGLE_WOOD);
-            Recipe_WoodAxe(Material.MANGROVE_WOOD, Material.STRIPPED_MANGROVE_WOOD);
-            Recipe_WoodAxe(Material.CHERRY_WOOD, Material.STRIPPED_CHERRY_WOOD);
-            Recipe_WoodAxe(Material.CRIMSON_HYPHAE, Material.STRIPPED_CRIMSON_HYPHAE);
-            Recipe_WoodAxe(Material.WARPED_HYPHAE, Material.STRIPPED_WARPED_HYPHAE);
+            if (mat.toString().startsWith("STRIPPED_")){
+                Recipe_WoodAxe(Material.getMaterial(mat.toString().replace("STRIPPED_","")), mat);
+            }
         }
     }
     //
@@ -106,20 +85,26 @@ public final class CustomItems {
 
         Bukkit.addRecipe(recipe);
     }
+    public static final List<Material> Axes = List.of(
+            Material.WOODEN_AXE,
+            Material.STONE_AXE,
+            Material.IRON_AXE,
+            Material.GOLDEN_AXE,
+            Material.DIAMOND_AXE,
+            Material.NETHERITE_AXE
+    );
+    public static List<Material> Woods = new ArrayList<>(10);
+    public static List<Material> WoodsStripped = new ArrayList<>(10);
     private static void Recipe_WoodAxe(Material source, Material result){
 
         // Recipe
 
-        ShapelessRecipe recipe = new ShapelessRecipe(Other_CraftKey("WoodAxe" + source.name()), new ItemStack(result));
+        Woods.add(source);
+        WoodsStripped.add(result);
+
+        ShapelessRecipe recipe = new ShapelessRecipe(Other_CraftKey("WoodAxe" + source.toString().toLowerCase()), new ItemStack(result));
         recipe.addIngredient(source);
-        recipe.addIngredient(new RecipeChoice.MaterialChoice(
-                Material.WOODEN_AXE,
-                Material.STONE_AXE,
-                Material.IRON_AXE,
-                Material.GOLDEN_AXE,
-                Material.DIAMOND_AXE,
-                Material.NETHERITE_AXE
-        ));
+        recipe.addIngredient(new RecipeChoice.MaterialChoice(Axes));
 
         Bukkit.addRecipe(recipe);
     }

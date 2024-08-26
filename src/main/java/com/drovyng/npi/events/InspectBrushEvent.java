@@ -159,6 +159,7 @@ public class InspectBrushEvent implements Listener {
 
                             if (resultData.contains("\n")) {
                                 for (String b : resultData.split("\n")) {
+                                    if (amount >= limit) break;
                                     if (skip(b)) continue;
                                     player.sendMessage(change(b));
                                     amount += 1;
@@ -242,6 +243,7 @@ public class InspectBrushEvent implements Listener {
                                         Statement statement = connection.createStatement();
                                         List<String> signData = SignMessageLookup.performLookup(null, statement, location, player, 1, limit);
                                         for (String signMessage : signData) {
+                                            if (amount >= limit) break;
                                             String bypass = null;
                                             if (skip(signMessage)) continue;
 
@@ -309,6 +311,7 @@ public class InspectBrushEvent implements Listener {
                                         Statement statement = connection.createStatement();
                                         List<String> blockData = ChestTransactionLookup.performLookup(null, statement, finalLocation, player, 1, limit, false);
                                         for (String data : blockData) {
+                                            if (amount >= limit) break;
                                             if (skip(data)) continue;
                                             player.sendMessage(change(data));
                                             amount += 1;
@@ -359,6 +362,7 @@ public class InspectBrushEvent implements Listener {
 
                                         if (blockData.contains("\n")) {
                                             for (String splitData : blockData.split("\n")) {
+                                                if (amount >= limit) break;
                                                 if (skip(splitData)) continue;
                                                 player.sendMessage(change(splitData));
                                                 amount += 1;
@@ -425,6 +429,7 @@ public class InspectBrushEvent implements Listener {
 
                                             if (blockData.contains("\n")) {
                                                 for (String b : blockData.split("\n")) {
+                                                    if (amount >= limit) break;
                                                     if (skip(b)) continue;
                                                     finalPlayer.sendMessage(change(b));
                                                     amount += 1;
@@ -439,6 +444,7 @@ public class InspectBrushEvent implements Listener {
 
                                             if (blockData.contains("\n")) {
                                                 for (String splitData : blockData.split("\n")) {
+                                                    if (amount >= limit) break;
                                                     if (skip(splitData)) continue;
                                                     finalPlayer.sendMessage(change(splitData));
                                                     amount += 1;
