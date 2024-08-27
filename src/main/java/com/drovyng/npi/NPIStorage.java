@@ -4,58 +4,53 @@ import com.drovyng.npi.panel.NPIManager;
 import com.google.common.base.Charsets;
 
 import java.io.*;
+import java.nio.file.Files;
 
 public class NPIStorage {
     public static final NPIStorage Instance = new NPIStorage();
-    private NPIStorage(){}
+
+    private NPIStorage() {}
 
     public File panelsFile;
 
-    public void Load(){
+    public void Load() {
+        final File configFolder = NPI.Instance.getDataFolder();
+        if (!configFolder.exists()) {
+            configFolder.mkdirs();
+        }
         panelsFile = new File(NPI.Instance.getDataFolder(), "palens.noedit");
 
-        if (!panelsFile.exists())
-            NPI.Instance.saveResource("palens.noedit", false);
+        if (!panelsFile.exists()) {
+            try {
+                panelsFile.createNewFile();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
 
         try {
-            final FileInputStream stream = new FileInputStream(panelsFile);
-
-            final var input = new BufferedReader(new InputStreamReader(stream, Charsets.UTF_8));
-
             try {
-                String line;
-
-                while ((line = input.readLine()) != null) {
+                for (var line : Files.readAllLines(panelsFile.toPath())) {
                     NPIManager.ParseLine(line);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
-            } finally {
-                input.close();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
-    public void Save(){
-        Writer writer = null;
+
+    public void Save() {
         try {
-            writer = new OutputStreamWriter(new FileOutputStream(panelsFile), Charsets.UTF_8);
-        } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
-        }
-        finally {
+            Writer writer = new OutputStreamWriter(new FileOutputStream(panelsFile), Charsets.UTF_8);
             try {
                 writer.write(NPIManager.SaveString());
-            } catch (IOException ex) {
-                ex.printStackTrace();
             } finally {
-                try {
-                    writer.close();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+                writer.close();
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 }

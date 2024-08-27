@@ -28,10 +28,9 @@ public class NPIManager implements Listener {
         for (int i = 2; i < args.length; i++) {
 
             var btn = args[i].split(";");
-            var x = Integer.parseInt(btn[0]);
-            var y = Integer.parseInt(btn[1]);
+            var slot = Integer.parseInt(btn[0]);
             var name = btn[2];
-            var lore = btn[3];
+            var lore = btn[3].replace("\\n", "\n");
             var action = NPIButton.NPIButtonAction.valueOf(btn[4]);
             var action2 = btn[5];
             var customModelData = Integer.parseInt(btn[6]);
@@ -40,7 +39,7 @@ public class NPIManager implements Listener {
             for (int j = 7; j < btn.length; j++) {
                 materials.add(Material.getMaterial(btn[j]));
             }
-            panel.buttons.put(x + y*9, new NPIButton(materials, name, lore, action, action2, customModelData));
+            panel.buttons.put(slot, new NPIButton(materials, name, lore, action, action2, customModelData));
         }
         Panels.put(args[0], panel);
     }
@@ -59,10 +58,9 @@ public class NPIManager implements Listener {
             for (var slot : panel.buttons.keySet()){
                 var btn = panel.buttons.get(slot);
                 saveButtons += ",";
-                saveButtons += (slot % 9) + ";";
-                saveButtons += (slot / 9) + ";";
+                saveButtons += slot + ";";
                 saveButtons += btn.name + ";";
-                saveButtons += btn.lore + ";";
+                saveButtons += btn.lore.replace("\n", "\\n").replace(",", "").replace(";", "") + ";";
                 saveButtons += btn.action.toString() + ";";
                 saveButtons += btn.action2 + ";";
                 saveButtons += btn.customModelData;
@@ -70,7 +68,8 @@ public class NPIManager implements Listener {
                     saveButtons += ";" + mat.toString();
                 }
             }
-            save += saveButtons.substring(1);
+            if (saveButtons.length() > 0)
+                save += saveButtons.substring(1);
         }
         return save.substring(1);
     }
@@ -87,7 +86,7 @@ public class NPIManager implements Listener {
             var panel = Panels.get(player.getMetadata("NPIOpenedPanel").getFirst().asString());
 
 
-            if (player.getOpenInventory().countSlots() < 30){
+            if (player.getOpenInventory().getTopInventory().getSize() < 30){
                 event.setCancelled(true);
                 if (panel.buttons.containsKey(slot)){
                     var btn = panel.buttons.get(event.getSlot());
@@ -101,16 +100,34 @@ public class NPIManager implements Listener {
                 }
             }
             else {
-                if (event.isRightClick()){
-                    if (event.getCursor().getType().equals(Material.AIR)){
+                var type = event.getCursor().getType();
+                if (slot > 26) return;
+                event.setCancelled(true);
+
+                if (event.isRightClick()) {
+                    if (type.equals(Material.AIR)){
                         panel.buttons.remove(slot);
                     }
                     else if (panel.buttons.containsKey(slot)){
-                        panel.buttons.get(slot).item.add(event.getCursor().getType());
+                        var btn = panel.buttons.get(slot);
+                        btn.item.add(type);
+                        panel.buttons.put(slot, btn);
+                    }
+                    else {
+                        panel.buttons.put(slot, new NPIButton(List.of(type), "Unnamed", "", NPIButton.NPIButtonAction.NONE, "", 0));
                     }
                 }
-                else if (!event.getCursor().getType().equals(Material.AIR) && panel.buttons.containsKey(slot))
-                        panel.buttons.put(slot, new NPIButton(List.of(event.getCursor().getType()), "Unnamed", "", NPIButton.NPIButtonAction.NONE, "", 0));
+                else if (event.isLeftClick() && panel.buttons.containsKey(slot)){
+                    var mats = "";
+
+                    for (var mat : panel.buttons.get(slot).item){
+                        mats += ", " + mat.toString();
+                    }
+                    if (mats.length() < 2){
+                        mats = ", ";
+                    }
+                    NPI.Send(player, "Материалы предмета: ["+mats.substring(2)+"]");
+                }
             }
         }
     }
@@ -119,7 +136,7 @@ public class NPIManager implements Listener {
     }
     public static void OpenPanel(Player player, String id, Boolean isEditor){
         if (!Panels.containsKey(id)){
-            NPI.Error(player, "невозможно открыть панель \"" + id + "\"");
+            NPI.Error(player, "Невозможно открыть панель \"" + id + "\"");
             return;
         }
         player.setMetadata("NPIOpenedPanel", new FixedMetadataValue(NPI.Instance, id));

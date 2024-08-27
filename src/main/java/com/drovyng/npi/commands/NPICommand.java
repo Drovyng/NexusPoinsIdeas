@@ -73,10 +73,39 @@ public class NPICommand implements CommandExecutor, TabExecutor {
                                 }, time * 20);
                             }
                             catch (NumberFormatException ex){
-                                NPI.Error(player, "невозможно преобразовать указанное время в число", true);
+                                NPI.Error(player, "Невозможно преобразовать указанное время в число", true);
                             }
                             break;
                         case 2:
+                            if (args.length > 1 && args[1].equalsIgnoreCase("help")){
+                                var p = "";
+                                if (args.length > 2 && EditorArgs.contains(args[2].toLowerCase()) && !args[2].equalsIgnoreCase("help")){
+                                    p = " " + args[2].toLowerCase();
+                                }
+                                NPI.Send(player, "----Editor /help" + p + "----");
+                                if ("change".contains(p)){
+                                    NPI.Send(player, "/npi editor change [id] [param] [value]");
+                                }
+                                if ("clone".contains(p)){
+                                    NPI.Send(player, "/npi editor clone [id] [new-id]");
+                                }
+                                if ("create".contains(p)){
+                                    NPI.Send(player, "/npi editor create [new-id]");
+                                }
+                                if ("edit".contains(p)){
+                                    NPI.Send(player, "/npi editor edit [id]");
+                                }
+                                if ("help".contains(p)){
+                                    NPI.Send(player, "/npi editor help [*command]");
+                                }
+                                if ("open".contains(p)){
+                                    NPI.Send(player, "/npi editor open [id]");
+                                }
+                                if ("remove".contains(p)){
+                                    NPI.Send(player, "/npi editor remove [id]");
+                                }
+                                return true;
+                            }
                             if (args.length < 3){
                                 NPI.Error(player, "мало аргументов", true);
                                 return true;
@@ -85,60 +114,73 @@ public class NPICommand implements CommandExecutor, TabExecutor {
                             args[2] = args[2].toLowerCase();        // Id
                             var lol = EditorArgs.indexOf(args[1]);
                             if (lol < 0 || (NPIStaticPanels.StaticPanels.contains(args[2]) && lol != 0) || (!NPIManager.Panels.containsKey(args[2]) && lol != 2)){
-                                NPI.Error(player, "неизвестные/запрещённые аргументы", true);
+                                NPI.Error(player, "Неизвестные/запрещённые аргументы", true);
                                 return true;
                             }
                             switch (lol){
                                 case 0:
                                     NPIManager.OpenPanel(player, args[2]);
+                                    NPI.Send(player, "Открыта панель \"" + args[2] + "\"");
                                     break;
                                 case 1:
                                     if (args.length < 4){
-                                        NPI.Error(player, "в удалении отклонено", true);
+                                        NPI.Error(player, "В удалении отклонено", true);
                                         return true;
                                     }
                                     NPIManager.Panels.remove(args[2]);
+                                    NPI.Send(player, "Удалена панель \"" + args[2] + "\"");
                                     break;
                                 case 2:
                                     NPIManager.Panels.put(args[2], new NPIPanel("Unnamed"));
+                                    NPI.Send(player, "Создана панель \"" + args[2] + "\"");
                                     break;
                                 case 3:
                                     NPIManager.OpenPanel(player, args[2], true);
+                                    NPI.Send(player, "Открыт редактор панели \"" + args[2] + "\"");
                                     break;
                                 case 4:
                                     if (args.length < 5){
-                                        NPI.Error(player, "мало аргументов", true);
+                                        NPI.Error(player, "Мало аргументов", true);
                                         return true;
                                     }
                                     var f = args[3].toLowerCase();    // Subfunction
                                     var c = args[4];    // Change To ...
+                                    var c2 = "";
+                                    for (int i = 4; i < args.length; i++) {
+                                        c2 += " " + args[i];
+                                    }
+                                    c2 = c2.substring(1);
 
                                     if (f.equals("id")){
                                         var getted = NPIManager.Panels.get(args[1]);
                                         NPIManager.Panels.remove(args[1]);
                                         NPIManager.Panels.put(c.toLowerCase(), getted);
+                                        NPI.Send(player, "У панели \"" + args[2] + "\" изменён идентификатор на \"" + c + "\"");
                                         return true;
                                     }
                                     if (f.equals("title")){
-                                        NPIManager.Panels.get(args[1]).name = c;
+                                        NPIManager.Panels.get(args[2]).name = c2;
+                                        NPI.Send(player, "У панели \"" + args[2] + "\" изменено название на  \"" + c2 + "\"");
                                         return true;
                                     }
                                     if (f.startsWith("name") || f.startsWith("text")){
                                         try {
                                             var i = Integer.parseInt(f.replace("lore", "").replace("name", ""));
-                                            if (NPIManager.Panels.get(args[1]).buttons.containsKey(i)){
-                                                var slot = NPIManager.Panels.get(args[1]).buttons.get(i);
+                                            if (NPIManager.Panels.get(args[2]).buttons.containsKey(i)){
+                                                var slot = NPIManager.Panels.get(args[2]).buttons.get(i);
                                                 if (f.startsWith("lore")){
-                                                    slot.lore = c;
+                                                    slot.lore = c2;
+                                                    NPI.Send(player, "У предмета панели \"" + args[2] + "\" в слоте " + i + " изменён лор на  \"" + c2 + "\"");
                                                 }
                                                 else{
-                                                    slot.name = c;
+                                                    slot.name = c2;
+                                                    NPI.Send(player, "У предмета панели \"" + args[2] + "\" в слоте " + i + " изменено название на  \"" + c2 + "\"");
                                                 }
-                                                NPIManager.Panels.get(args[1]).buttons.put(i, slot);
+                                                NPIManager.Panels.get(args[2]).buttons.put(i, slot);
                                                 return true;
                                             }
                                         } catch (NumberFormatException e) {
-                                            NPI.Error(player, "неверный формат слота", true);
+                                            NPI.Error(player, "Неверный формат слота", true);
                                             return true;
                                         }
                                         return true;
@@ -146,14 +188,15 @@ public class NPICommand implements CommandExecutor, TabExecutor {
                                     if (f.startsWith("data")){
                                         try {
                                             var i = Integer.parseInt(f.replace("data", ""));
-                                            if (NPIManager.Panels.get(args[1]).buttons.containsKey(i)){
-                                                var slot = NPIManager.Panels.get(args[1]).buttons.get(i);
+                                            if (NPIManager.Panels.get(args[2]).buttons.containsKey(i)){
+                                                var slot = NPIManager.Panels.get(args[2]).buttons.get(i);
                                                 slot.customModelData = Integer.parseInt(c);
-                                                NPIManager.Panels.get(args[1]).buttons.put(i, slot);
+                                                NPIManager.Panels.get(args[2]).buttons.put(i, slot);
+                                                NPI.Send(player, "У предмета панели \"" + args[2] + "\" в слоте " + i + " изменена моделька на  " + slot.customModelData);
                                                 return true;
                                             }
                                         } catch (NumberFormatException e) {
-                                            NPI.Error(player, "неверный формат слота", true);
+                                            NPI.Error(player, "Неверный формат слота", true);
                                             return true;
                                         }
                                         return true;
@@ -161,17 +204,18 @@ public class NPICommand implements CommandExecutor, TabExecutor {
                                     if (f.startsWith("action")){
                                         try {
                                             var i = Integer.parseInt(f.replace("action", ""));
-                                            if (NPIManager.Panels.get(args[1]).buttons.containsKey(i)){
-                                                var slot = NPIManager.Panels.get(args[1]).buttons.get(i);
+                                            if (NPIManager.Panels.get(args[2]).buttons.containsKey(i)){
+                                                var slot = NPIManager.Panels.get(args[2]).buttons.get(i);
                                                 slot.action = NPIButton.NPIButtonAction.valueOf(c.toUpperCase());
-                                                NPIManager.Panels.get(args[1]).buttons.put(i, slot);
+                                                NPIManager.Panels.get(args[2]).buttons.put(i, slot);
+                                                NPI.Send(player, "У предмета панели \"" + args[2] + "\" в слоте " + i + " изменено действие на " + c.toUpperCase());
                                                 return true;
                                             }
                                         } catch (NumberFormatException e) {
-                                            NPI.Error(player, "неверный формат слота", true);
+                                            NPI.Error(player, "Неверный формат слота", true);
                                             return true;
                                         } catch (Exception e) {
-                                            NPI.Error(player, "неверный формат действия", true);
+                                            NPI.Error(player, "Неверный формат действия", true);
                                             return true;
                                         }
                                         return true;
@@ -179,25 +223,50 @@ public class NPICommand implements CommandExecutor, TabExecutor {
                                     if (f.startsWith("subaction")){
                                         try {
                                             var i = Integer.parseInt(f.replace("subaction", ""));
-                                            if (NPIManager.Panels.get(args[1]).buttons.containsKey(i)){
-                                                var slot = NPIManager.Panels.get(args[1]).buttons.get(i);
+                                            if (NPIManager.Panels.get(args[2]).buttons.containsKey(i)){
+                                                var slot = NPIManager.Panels.get(args[2]).buttons.get(i);
                                                 slot.action2 = c;
-                                                NPIManager.Panels.get(args[1]).buttons.put(i, slot);
+                                                NPIManager.Panels.get(args[2]).buttons.put(i, slot);
+                                                NPI.Send(player, "У предмета панели \"" + args[2] + "\" в слоте " + i + " изменено поддействие на " + c);
                                                 return true;
                                             }
                                         } catch (NumberFormatException e) {
-                                            NPI.Error(player, "неверный формат слота", true);
+                                            NPI.Error(player, "Неверный формат слота", true);
                                             return true;
                                         }
                                         return true;
                                     }
-                                    break;
+                                    NPI.Error(player, "Указанный параметр не найден", true);
+                                    return false;
+                                    /*
+                                                   0      1     2     3
+                                            /npi editor clone from create
+                                     */
                                 case 5:
-                                    NPIStorage.Instance.Save();
-                                case 6:
-                                    NPIStorage.Instance.Load();
+                                    if (args.length < 4){
+                                        NPI.Error(player, "Недостаточно аргументов", true);
+                                        return true;
+                                    }
+                                    args[3] = args[3].toLowerCase();
+                                    if (!NPIManager.Panels.containsKey(args[2])){
+                                        NPI.Error(player, "Источника не существует", true);
+                                        return true;
+                                    }
+                                    if (NPIManager.Panels.containsKey(args[3])){
+                                        NPI.Error(player, "Идентификатор результата уже существует", true);
+                                        return true;
+                                    }
+                                    NPI.Send(player, "Склонирована панель \"" + args[2] + "\" в новую панель \"" + args[3] + "\"");
+                                    return true;
                             }
+                            return true;
+                        case 3:
+                            NPIStorage.Instance.Save();
+                            NPI.Send(player, "Конфиг сохранён");
                             break;
+                        case 4:
+                            NPIStorage.Instance.Load();
+                            NPI.Send(player, "Конфиг перезагружен");
                     }
                     return true;
                 }
@@ -219,8 +288,8 @@ public class NPICommand implements CommandExecutor, TabExecutor {
         return true;
     }
     public static final List<String> Pages = List.of("info", "added");
-    public static final List<String> PagesAdmin = List.of("admin", "resourcepack-restart", "editor", "info", "added");
-    public static final List<String> EditorArgs = List.of("open", "remove", "create", "edit", "change", "save-cfg", "reload-cfg");
+    public static final List<String> PagesAdmin = List.of("admin", "resourcepack-restart", "editor", "save-cfg", "reload-cfg", "info", "added");
+    public static final List<String> EditorArgs = List.of("open", "remove", "create", "edit", "change", "clone", "help");
 
     public static void SendPlayerInfo(Player player){
         player.sendMessage(
@@ -253,11 +322,15 @@ public class NPICommand implements CommandExecutor, TabExecutor {
                     case 0:
                     case 1:
                     case 3:
-                        if (args.length == 2) {
+                    case 5:
+                        if (args.length == 3) {
                             return NPIManager.Panels.keySet().stream().toList();
                         }
                         return List.of();
                     case 4:
+                        if (args.length < 3) {
+                            return List.of();
+                        }
                         if (args.length == 3) {
                             return NPIManager.Panels.keySet().stream().toList();
                         }
@@ -269,6 +342,11 @@ public class NPICommand implements CommandExecutor, TabExecutor {
                             return List.of("NONE", "OPEN_PANEL");
                         }
                         break;
+                    case 6:
+                        if (args.length == 3) {
+                            return EditorArgs;
+                        }
+                        return List.of();
                 }
             }
             if (args.length == 2){

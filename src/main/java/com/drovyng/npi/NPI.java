@@ -26,6 +26,8 @@ public final class NPI extends JavaPlugin {
 
         CustomItems.register();
 
+        NPIStaticPanels.ShouldStatic.clear();
+
         var npi_command = new NPICommand();
         getCommand("npi").setExecutor(npi_command);
         getCommand("npi").setTabCompleter(npi_command);
@@ -33,6 +35,10 @@ public final class NPI extends JavaPlugin {
         registerEvents();
 
         Bukkit.getScheduler().runTaskTimer(this, NPIManager::UpdatePanels, 0, 20);
+        Bukkit.getScheduler().runTaskTimer(this, NPIStorage.Instance::Save, 6000, 12000);
+    }
+    public static void Send(Player player, String text){
+        player.sendMessage("["+TitleShort+"] " + text);
     }
     public static void Error(Player player, String text) {
         Error(player, text, false);
@@ -44,10 +50,11 @@ public final class NPI extends JavaPlugin {
     public static void Error(Player player, String text, Boolean isLazy){
         text = "[" + TitleShort + "] " + Color.RED + "Ошибка: " + text;
         if (!isLazy){
-            Instance.getLogger().warning(text);
-
+            Instance.getLogger().severe("[NPI] Ошибка: " + text);
             player.sendMessage(text + ". Пожалуйста сообщите администрации!");
+            return;
         }
+        player.sendMessage(text + ".");
     }
     private void registerEvent(Listener listener) {
         getServer().getPluginManager().registerEvents(listener, this);

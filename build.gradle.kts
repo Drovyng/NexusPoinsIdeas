@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "com.drovyng"
-version = "1.3"
+version = "1.4"
 description = "NexusPoins Ideas Plugin by Drovyng"
 
 base {

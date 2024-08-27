@@ -1,5 +1,7 @@
 package com.drovyng.npi;
 
+import com.drovyng.npi.panel.NPIManager;
+import com.drovyng.npi.panel.NPIStaticPanels;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
@@ -82,6 +84,23 @@ public final class CustomItems {
         );
         recipe.setIngredient('t', template);
         recipe.setIngredient('g', Material.GLASS_PANE);
+
+        if (NPIStaticPanels.ShouldStatic.contains("added")){
+            var panel = NPIManager.Panels.get("added");
+            var btn1 = panel.buttons.get(10);
+            btn1.item.add(template);
+            NPIManager.Panels.get("added").buttons.put(10, btn1);
+        }
+        if (NPIStaticPanels.ShouldStatic.contains("craft-2")){
+            var panel = NPIManager.Panels.get("craft-2");
+            var btn1 = panel.buttons.get(13);
+            btn1.item.add(template);
+            NPIManager.Panels.get("craft-2").buttons.put(13, btn1);
+
+            var btn2 = panel.buttons.get(16);
+            btn2.item.add(template);
+            NPIManager.Panels.put("craft-2", panel);
+        }
 
         Bukkit.addRecipe(recipe);
     }

@@ -17,6 +17,10 @@ public class NPIButton {
     public NPIButtonAction action;
     public String action2;
 
+    public NPIButton Clone(){
+        return new NPIButton(item, name, lore, action, action2, customModelData);
+    }
+
     public NPIButton(List<Material> item, String name, String lore, NPIButtonAction action, String action2, int customModelData){
         this.item = item;
         this.name = name;
