@@ -51,14 +51,14 @@ public class NPICommand implements CommandExecutor, TabExecutor {
                                     time = 10;
                                 }
                                 for(var plr : Bukkit.getServer().getOnlinePlayers()){
-                                    plr.showTitle(Title.title(Component.text(NPI.TitleShort + " - не ливайте!"), Component.text("через " + time + "сек. перезагрузятся текстурпаки")));
+                                    plr.showTitle(Title.title(Component.text(Color.GOLD+"Перезагрузка текстур: "+Color.GREEN+Color.BOLD+time+Color.GREEN+" сек"), Component.text(Color.RED + "Не выходите с сервера!")));
                                     player.playSound(player, Sound.ENTITY_ARROW_HIT_PLAYER, 1, 2);
                                 }
                                 if (time > 10){
                                     Bukkit.getScheduler().runTaskLater(NPI.Instance, () ->
                                     {
                                         for (var plr : Bukkit.getServer().getOnlinePlayers()) {
-                                            plr.showTitle(Title.title(Component.text(NPI.TitleShort + " - не ливайте!"), Component.text("через 10сек. перезагрузятся текстурпаки")));
+                                            plr.showTitle(Title.title(Component.text(Color.GOLD+"Перезагрузка текстур: "+Color.GREEN+Color.BOLD+"10"+Color.GREEN+" сек"), Component.text(Color.RED + "Не выходите с сервера!")));
                                             player.playSound(player, Sound.ENTITY_ARROW_HIT_PLAYER, 1, 2);
                                         }
                                     }, time * 20 - 200);
@@ -296,9 +296,9 @@ public class NPICommand implements CommandExecutor, TabExecutor {
                 Component.text(
                         Color.RED + Color.BOLD + "Nexus" +
                                 Color.YELLOW + Color.BOLD + "Poins" +
-                                Color.WHITE + Color.BOLD + "Ideas " +
+                                Color.GREEN + Color.BOLD + "Ideas " +
                                 Color.RESET + "v" + NPI.Instance.getPluginMeta().getVersion() +
-                                " by " + Color.GREEN + "Drovyng",
+                                " by " + Color.AQUA + Color.BOLD + "Drovyng",
                         TextColor.fromHexString("#D8D8D8")
                 )
         );

@@ -45,7 +45,7 @@ public final class NPI extends JavaPlugin {
     }
     public static final String TitleShort = Color.RED + Color.BOLD + "N" +
             Color.YELLOW + Color.BOLD + "P" +
-            Color.WHITE + Color.BOLD + "I" + Color.RESET;
+            Color.GREEN + Color.BOLD + "I" + Color.RESET;
 
     public static void Error(Player player, String text, Boolean isLazy){
         text = "[" + TitleShort + "] " + Color.RED + "Ошибка: " + text;

@@ -25,22 +25,28 @@ public class NPIManager implements Listener {
     public static void ParseLine(String line){
         var args = line.split(",");
         var panel = new NPIPanel(args[1]);
+        System.out.println("ПОХУЙ!!! ЗАБЕЙ НА ЭТО!!!");
         for (int i = 2; i < args.length; i++) {
+            try {
+                var btn = args[i].split(";");
+                var slot = Integer.parseInt(btn[0]);
+                var name = btn[2];
+                var lore = btn[3].replace("\\n", "\n");
+                var action = NPIButton.NPIButtonAction.valueOf(btn[4]);
+                var action2 = btn[5];
+                var customModelData = Integer.parseInt(btn[6]);
+                List<Material> materials = new ArrayList<>(1);
 
-            var btn = args[i].split(";");
-            var slot = Integer.parseInt(btn[0]);
-            var name = btn[2];
-            var lore = btn[3].replace("\\n", "\n");
-            var action = NPIButton.NPIButtonAction.valueOf(btn[4]);
-            var action2 = btn[5];
-            var customModelData = Integer.parseInt(btn[6]);
-            List<Material> materials = new ArrayList<>(1);
-
-            for (int j = 7; j < btn.length; j++) {
-                materials.add(Material.getMaterial(btn[j]));
+                for (int j = 7; j < btn.length; j++) {
+                    materials.add(Material.getMaterial(btn[j]));
+                }
+                panel.buttons.put(slot, new NPIButton(materials, name, lore, action, action2, customModelData));
             }
-            panel.buttons.put(slot, new NPIButton(materials, name, lore, action, action2, customModelData));
+            catch (Exception ex){
+                System.out.println(ex.getMessage());
+            }
         }
+        System.out.println("ПОХУЙ!!! ЗАБЕЙ НА ЭТО!!!");
         Panels.put(args[0], panel);
     }
     public static String SaveString(){
